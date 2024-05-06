@@ -10,8 +10,12 @@ public class Wordlist {
 	private String[] list;
 	private List<String> listOfWords; 
 
-	Wordlist() {
-		File file=new File("C:\\Users\\gbky2\\eclipse-workspace\\finalProject\\src\\finalProject\\AllWords\\");
+	/*
+	 * Scans through and generates WordList from AllWords file and stores it in a list.
+	 * The file was taken from the NYT wordlist.
+	 */
+	public  Wordlist() {
+		File file = new File("C:\\Users\\gbky2\\eclipse-workspace\\finalProject\\src\\finalProject\\AllWords\\");
         Scanner sc;
         list = new String[2309];
 		
@@ -22,12 +26,14 @@ public class Wordlist {
 						list[i] = sc.nextLine().substring(3, 8);
 						i++;
 					}
-					
+
 					listOfWords = Arrays.asList(list);
         	} 
         	catch (FileNotFoundException e) {
         		e.printStackTrace();
         	}
+        	
+        	
 	
 	}
 	

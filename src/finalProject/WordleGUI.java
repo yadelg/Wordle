@@ -69,9 +69,6 @@ public class WordleGUI extends JFrame {
         mainFrame.setLayout(new GridBagLayout());
         
         
-        
-        
-        
         panel.setLayout(new GridLayout(6, 5, 5, 5));
         borderPanel.setLayout(new GridLayout(1, 1, 1, 1));
         panel2.setLayout(new GridLayout(1, 0));
@@ -128,18 +125,8 @@ public class WordleGUI extends JFrame {
             	 RoundedButton button = new RoundedButton(b[i][j]);
                  keys[i][j] = button;
 
+                
                  
-                 button.addMouseListener(new MouseAdapter() {
-                     @Override
-                     public void mouseEntered(MouseEvent e) {
-                         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)); // Set cursor to hand pointer when hovered over
-                     }
-
-                     @Override
-                     public void mouseExited(MouseEvent e) {
-                         button.setCursor(Cursor.getDefaultCursor()); // Set cursor to default when mouse exits
-                     }
-                 });
                  button.addActionListener((ActionListener) new ActionListener() {
                  
                 	 public void actionPerformed(ActionEvent e) {
@@ -168,10 +155,16 @@ public class WordleGUI extends JFrame {
                  }
                  });
                  
+                 /*
+                  * KeyListener for when the buttons have focus instead of the textfields.
+                  * Giving the textfields focus repeatedly after a button is pressed wouldn't allow for letters to 
+                  * be typed subsequently.
+                  */
+                 
                  button.addKeyListener(new KeyAdapter() { 
                 	 public void keyPressed(KeyEvent e) {
              	        if (Character.isLetter(e.getKeyChar()) && counter < 5) {
-             	            letter(e);
+             	            letter(String.valueOf(e.getKeyChar()));
              	        } 
              	        
              	        else if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE && guess.length() > 0) {
@@ -191,24 +184,54 @@ public class WordleGUI extends JFrame {
                 	 
                  });
                     
+                 //This is the logic for modifying the Rounded button class to create the enter button.
                  if (i == 2 && j == 0) {
-                     // Make the button span two columns
+                     //Make the button span two columns
                      button.setPreferredSize(new Dimension(90, 50));
-                     button.setText("Enter");
+                     button.setText("Enter");                     
+                     button.addMouseListener(new MouseAdapter() {
+                         @Override
+                         public void mouseEntered(MouseEvent e) {
+                             button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)); 
+                         }
+
+                         @Override
+                         public void mouseExited(MouseEvent e) {
+                             button.setCursor(Cursor.getDefaultCursor());
+                         }
+                     });
+                     
                      panel3.add(button);
                  }
                  
+                 
+                 //Skip this box next to enter to allow Enter box to take up more space.
                  else if (i== 2 && j ==1) {
-                	 
+                	continue; 
                  }
                  
                  else if  (i == 2 && j==9) {
                 	 button.setPreferredSize(new Dimension(90, 50));
                      button.setText("back");
+                     button.addMouseListener(new MouseAdapter() {
+                         @Override
+                         public void mouseEntered(MouseEvent e) {
+                             button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)); 
+                         }
+
+                         @Override
+                         public void mouseExited(MouseEvent e) {
+                             button.setCursor(Cursor.getDefaultCursor()); 
+                         }
+                     });
+                     
                      panel3.add(button);
+                     
                  }
-                 
+               
+                 //Essentially a filler black space above the Enter button.
                  else if(i==1 && j==0) {
+                	 
                 	 button.setBackground(Color.BLACK);
                 	 button.setPreferredSize(new Dimension(50, 50));
                 	 panel3.add(button);
@@ -217,14 +240,27 @@ public class WordleGUI extends JFrame {
                  
                  
                  
-                 else {
+                 else { 
+                     button.addMouseListener(new MouseAdapter() {
+                         @Override
+                         public void mouseEntered(MouseEvent e) {
+                             button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)); 
+                         }
+
+                         @Override
+                         public void mouseExited(MouseEvent e) {
+                             button.setCursor(Cursor.getDefaultCursor()); 
+                         }
+                     });
+                     
                 	 panel3.add(button);
                  }
                  
                 
             }
         }
-
+        
+        //Creating the word boxes where each letter is displayed after typing or clicking a button
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 5; j++) {
                 textFields[i][j] = new JTextField("");
@@ -243,7 +279,7 @@ public class WordleGUI extends JFrame {
                 	    @Override
                 	    public void keyPressed(KeyEvent e) {
                 	        if (Character.isLetter(e.getKeyChar()) && counter < 5) {
-                	            letter(e);
+                	            letter(String.valueOf(e.getKeyChar()));
                 	        } 
                 	        
                 	        else if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE && guess.length() > 0) {
@@ -256,7 +292,9 @@ public class WordleGUI extends JFrame {
                 	        } 
                 	        else if (counter == 5 && e.getKeyCode() == KeyEvent.VK_ENTER && !Word.isWord(guess)) {
                 	            dialogFader("Not in Word List!");
-                	        } else if (counter != 5 && e.getKeyCode() == KeyEvent.VK_ENTER) {
+                	        } 
+                	        
+                	        else if (counter != 5 && e.getKeyCode() == KeyEvent.VK_ENTER) {
                 	            dialogFader("Not enough Letters!");
                 	        }
                 	    }
@@ -272,7 +310,7 @@ public class WordleGUI extends JFrame {
             }
         }
 
-
+    //Dialog fader for when there is either not enough letters or a word is not in the word list.
     public void dialogFader(String labelinput) {
         JDialog dialog = new JDialog(mainFrame);
         dialog.setSize(200, 30);
@@ -306,7 +344,8 @@ public class WordleGUI extends JFrame {
                 fadeTimer.start();
             }
         });
-
+        
+        //Allows for letters to be pressed while the dialog fader is still active.
         dialog.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
@@ -336,6 +375,7 @@ public class WordleGUI extends JFrame {
     }
     
     
+    //Logic for when backspace is either clicked or pressed on the keyboard
     public void backspace() {
     	 counter--;
          guess = guess.substring(0, guess.length() - 1);
@@ -345,19 +385,8 @@ public class WordleGUI extends JFrame {
 
     }
     
-    public void letter(KeyEvent e) {
-    	counter++;
-        guess += e.getKeyChar();
-        System.out.println(guess + " " + counter);
-        
-        textFields[row][col].setText(String.valueOf(e.getKeyChar()).toUpperCase());
-        textFields[row][col].setFont(new Font("Franklin Gothic", Font.BOLD, 40));
-        textFields[row][col].setForeground(Color.WHITE);
-        textFields[row][col].requestFocus();
-        col++;
-    }
     
-    //method called 
+    //Logic for when a letter is pressed on the keyboard or clicked on the digital keyboard..
     public void letter(String e) {
     	counter++;
         guess += e.toLowerCase();
@@ -371,6 +400,7 @@ public class WordleGUI extends JFrame {
         col++;
     }
 
+    //Method is called 
     public void handlekeyPressed() {
         for (int i = 0; i < 5; i++) {
             System.out.println(ans.correct(guess));
@@ -423,6 +453,10 @@ public class WordleGUI extends JFrame {
             }
         }
 
+        /*
+         * If the answer equals the word, increase the number of wins and the streak.
+         * Check to see if the current streak is larger than the max streak and update if needed.
+         */
         if (ans.getWord().equals(guess)) {
             JOptionPane.showMessageDialog(mainFrame, "YOU WON");
             numGames++;
@@ -431,36 +465,36 @@ public class WordleGUI extends JFrame {
             if (streak > maxStreak) {
             	maxStreak = streak;
             }
-            
-            if (numGuesses < 7) {
-            	data[numGuesses-1]++;
-                }
+
+            data[numGuesses-1]++;    
             resetGame();
         } 
+        
+        //Continue the game.
         else {
             guess = "";
             col = 0;
             row++;
             numGuesses++;
             
+            //Check to see if the last row is occupied, if not, continue the game.
             if (row != 6) {
                   textFields[row][col].requestFocus();
-             }
+             	}
             
+            //Or else you used the last guess and you lost.
             else {
-           JOptionPane.showMessageDialog(mainFrame, "You lost, the word was: " + ans.getWord());
-           numGames++;
-           
-           if (numGuesses < 7) {
-           	data[numGuesses - 1]++;
-               }
-           
-           if (streak > maxStreak) {
-           	maxStreak = streak;
-           }
-           
-           streak = 0;
-           resetGame();
+            	JOptionPane.showMessageDialog(mainFrame, "You lost, the word was: " + ans.getWord());
+            	numGames++;
+            	data[numGuesses - 1]++;
+            	
+            	if (streak > maxStreak) {
+            		maxStreak = streak;
+            	}
+            	
+            	//Reset streak
+            	streak = 0;
+            	resetGame();
             }
         }
            
@@ -475,13 +509,13 @@ public class WordleGUI extends JFrame {
         
     }
 
+   //Resets the color and all other variables associated with the last game play.
     public void resetGame() {
             row = 0;
             col = 0;
             guess = "";
             counter = 0;
-            
-            ans = new Word();
+            ans = new Word(); 
             System.out.println(ans.getWord());
 
             for (int i = 0; i < 6; i++) {
@@ -497,7 +531,7 @@ public class WordleGUI extends JFrame {
                 for (int j = 0; j < 10; j++) {
                 	
                 	if (i == 2 && j == 0) {
-                        // Make the button span two columns
+                        //Make the Enter button span two columns
                         keys[i][j].setPreferredSize(new Dimension(90, 50));
                         keys[i][j].setText("Enter");
                         
@@ -507,10 +541,13 @@ public class WordleGUI extends JFrame {
                     	 keys[i][j].setPreferredSize(new Dimension(90, 50));
                 	 }
                     
+                	//No button created next to Enter.
                     else if (i== 2 && j ==1) {
-                   	 
+                   	 continue;
                     }
                     
+                	
+                	
                     else if(i==1 && j==0 ) {
                     	keys[i][j].setBackground(Color.BLACK);
          
@@ -518,22 +555,17 @@ public class WordleGUI extends JFrame {
                     }
                     
                     else {
-                   	
-                    
-                	
                     keys[i][j].setBackground(Color.GRAY);
                     keys[i][j].setHorizontalAlignment(JTextField.CENTER);
                     keys[i][j].setPreferredSize(new Dimension(50, 50));
-                    if (b[i][j].equals("")) {
-                        keys[i][j].setBackground(Color.GRAY);
-                        keys[i][j].setBorder(new LineBorder(Color.GRAY));
-                    }
                     keys[i][j].setBorder(new LineBorder(Color.GRAY));
                     keys[i][j].setFont(new Font("Franklin Gothic", Font.BOLD, 20));
                     keys[i][j].setForeground(Color.WHITE);
                 }
             }
             }
+            
+            
             textFields[row][col].requestFocus();
             new Stats(data, NumberOfGuesses, numGuesses, numGames, numWins, streak, maxStreak);
             numGuesses = 1;

@@ -9,9 +9,11 @@ public class RoundedButton extends JButton {
 
  
 	/**
-	 * 
+	 * This class was overridden to better replicate how each button looks on wordle for the keyboard.
+	 * Traditional Java buttons have spiky edges, have borders around the text when hovered over, etc.
 	 */
 	private static final long serialVersionUID = 1L;
+
 
 	public RoundedButton(String text) {
         super(text);
@@ -28,11 +30,14 @@ public class RoundedButton extends JButton {
     }
 
     @Override
+    //Makes the rectangle have round edges.
     protected void paintComponent(Graphics g) {
         g.setColor(getBackground());
-        g.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10); // Rounded rectangle
+        g.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
         super.paintComponent(g);
     }
+    
+
 
     @Override
     protected void paintBorder(Graphics g) {

@@ -12,6 +12,7 @@ import java.util.TreeMap;
 import java.util.Random;
 
 public class Word {
+	
 	private String answer;
 	
  public Word() {
@@ -22,6 +23,7 @@ public class Word {
 	 return answer;
  }
  
+ //Method checks if a guess is a word or not by checking if its in the list of possible words.
  public static boolean isWord(String guess) {
 	 Wordlist list = new Wordlist();
 	 if (list.getListofWords().contains(guess)) {
@@ -31,6 +33,10 @@ public class Word {
  }
 
 
+ /*
+  * Creates a word by scanning a random amount of lines within the file and stopping at the randomly
+  * generated number.
+  */
  private String createWord() {
 	 answer = "";
 	 Random rand = new Random();
@@ -63,6 +69,7 @@ public class Word {
  }
  
  
+ //Method finds the amount of times one letter appears in the word.
  public int getOccurences(String letter) {
 	 int num = 0;
 	 for(int i = 0; i < answer.length(); i++) {
@@ -72,44 +79,59 @@ public class Word {
 	 }
 	 return num;
  }
- // add key value and its occurences
- // [a->2, p->1, n-> 1, e->1]
- // [a, p, a, n, e]  answer
- // [a, p, a, n, a]  guess
- // [0, 0, 0, 0, X]  result
- // loop through the guess, if in right spot, make it 0 and decrement key (ONLY ONCE)
- //Compare answer to guess
- //Compare hashmap to guess
- //loop again to figure out any yellows
+
+ 
+ /*
+  *Below is the code for the main Wordle algorithm.
+  *Essentially, the program takes into account the amount of letters each has and how many time each
+  *letter pops up through a hashmap. After storing each letter as the key with the occurrences of each
+  *letter as the return value, the second loop finds all the letters in the correct spot (green letters)
+  *and decrements the amount of occurrences by one. The finalAnswer array at the same time makes the
+  *corresponding number equal to 0, which signifies a green letter (if the letter is not green, the value is
+  *stored as 2 instead). The third loop accounts for any yellow positions keeping in mind the amount of
+  *Occurrences of each letter (and how many times they've already been selected green or yellow).
+  *
+  * Example 
+  * Guess = sissy
+  * Answer = sadly
+  * 
+  * Would return: [0, 2, 2, 2, 2]
+  * Instead of: [0, 2, 1, 1, 2] as "s", only appears once in the word
+  * 
+  * 1 = yellow, 0 = green, 2 = gray.
+  */
 public ArrayList<Integer> correct(String guess) {
-     HashMap<String, Integer> a = new HashMap<String, Integer>(); 
-     ArrayList<Integer> b = new ArrayList<Integer>();
+     HashMap<String, Integer> initialGuess = new HashMap<String, Integer>(); 
+     ArrayList<Integer> finalAnswer = new ArrayList<Integer>();
 	 
+     //initial loop (storing letters and occurrences into hashmap).
 	 for (int i = 0; i < guess.length(); i++) {
 		 String current = String.valueOf(guess.charAt(i));
-		 a.put(current, getOccurences(String.valueOf(guess.charAt(i))));
+		 initialGuess.put(current, getOccurences(String.valueOf(guess.charAt(i))));
 	 }
 	 
+	 //Gets all the green letters.
 	 for (int i = 0; i < guess.length(); i++) {
 		 String current = String.valueOf(guess.charAt(i));
 		 if (current.equals(String.valueOf(String.valueOf(answer.charAt(i))))) {
-			 b.add(0);
-				 a.replace(current, a.get(current) - 1);		 
+			 finalAnswer.add(0);
+				 initialGuess.replace(current, initialGuess.get(current) - 1);		 
 		 }
 		 else {
-			 b.add(2);
+			 finalAnswer.add(2);
 		 }
 	 }
 	 
+	 //Gets the yellow letters.
 	 for (int i = 0; i < guess.length(); i++) {
 		 String current = String.valueOf(guess.charAt(i));
-		 if (a.get(current) >= 1 && b.get(i) != 0) {
-			 b.set(i, 1);
-			 a.replace(current, a.get(current)- 1);
+		 if (initialGuess.get(current) >= 1 && finalAnswer.get(i) != 0) {
+			 finalAnswer.set(i, 1);
+			 initialGuess.replace(current, initialGuess.get(current)- 1);
 			}
 		}
 	 
-	return b; 
+	return finalAnswer; 
  }
  
 }
