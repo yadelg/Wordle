@@ -88,7 +88,7 @@ public class WordleGUI extends JFrame {
         ImageIcon icon = new ImageIcon(resizedImage);
         JLabel leaderboard = new JLabel(icon);
         JLabel settings = new JLabel(icon2);
-        JPanel pic = new JPanel();
+        JPanel topRightButtons = new JPanel();
         
         //Currently no function.
         settings.addMouseListener(new MouseAdapter() {
@@ -125,8 +125,8 @@ public class WordleGUI extends JFrame {
         
         
         
-        pic.add(settings);
-        pic.add(leaderboard);
+        topRightButtons.add(settings);
+        topRightButtons.add(leaderboard);
         
        
         //The white line under Wordle
