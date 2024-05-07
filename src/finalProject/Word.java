@@ -23,7 +23,7 @@ public class Word {
 	 return answer;
  }
  
- //Method checks if a guess is a word or not by checking if its in the list of possible words.
+ //Method checks if a guess is a word or not by checking if it is in the list of possible words.
  public static boolean isWord(String guess) {
 	 Wordlist list = new Wordlist();
 	 if (list.getListofWords().contains(guess)) {

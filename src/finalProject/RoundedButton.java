@@ -23,8 +23,8 @@ public class RoundedButton extends JButton {
         setOpaque(false);
         setForeground(Color.WHITE);
         setBackground(Color.GRAY);
-        setPreferredSize(new Dimension(50, 50));
-        setFont(new Font("Franklin Gothic", Font.BOLD, 20));
+        setPreferredSize(new Dimension(52, 52));
+        setFont(new Font("Franklin Gothic", Font.BOLD, 16));
         
         
     }

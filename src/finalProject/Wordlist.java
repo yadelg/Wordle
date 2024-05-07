@@ -12,7 +12,7 @@ public class Wordlist {
 
 	/*
 	 * Scans through and generates WordList from AllWords file and stores it in a list.
-	 * The file was taken from the NYT wordlist.
+	 * The file was taken from the NYT word list.
 	 */
 	public  Wordlist() {
 		File file = new File("C:\\Users\\gbky2\\eclipse-workspace\\finalProject\\src\\finalProject\\AllWords\\");

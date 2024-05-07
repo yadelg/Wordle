@@ -32,7 +32,7 @@ public class WordleGUI extends JFrame {
 	    private JPanel panel3;
 	    private GridBagConstraints cons;
 	    private JPanel borderPanel;
-	    
+	    int index = 0;
 	   
 
 	        
@@ -68,18 +68,92 @@ public class WordleGUI extends JFrame {
         mainFrame.setSize(1000, 1000);
         mainFrame.setLayout(new GridBagLayout());
         
+
+        
+        BufferedImage myPicture = null;
+        BufferedImage myPicture2 = null;
+        try {
+            myPicture = ImageIO.read(new File("C:\\Users\\gbky2\\Downloads\\icon.png"));
+            myPicture2 = ImageIO.read(new File("C:\\Users\\gbky2\\Downloads\\setting.jpg"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        int width = 50; // Specify the width of the resized image
+        int height = 50; // Specify the height of the resized image
+        Image resizedImage = myPicture.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        Image resizedImage2 = myPicture2.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        
+        ImageIcon icon2 = new ImageIcon(resizedImage2);
+        ImageIcon icon = new ImageIcon(resizedImage);
+        JLabel leaderboard = new JLabel(icon);
+        JLabel settings = new JLabel(icon2);
+        JPanel pic = new JPanel();
+        
+        //Currently no function.
+        settings.addMouseListener(new MouseAdapter() {
+            		@Override
+            				public void mouseEntered(MouseEvent e) {
+            			settings.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)); 
+            			}
+
+            		@Override
+            				public void mouseExited(MouseEvent e) {
+            					settings.setCursor(Cursor.getDefaultCursor()); 
+            			}
+            		
+            		public void mouseClicked(MouseEvent e) {
+            			
+            		}
+        			});
+        
+        leaderboard.addMouseListener(new MouseAdapter() {
+        			@Override
+        				public void mouseEntered(MouseEvent e) {
+            					leaderboard.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)); 
+        				}
+
+        			@Override
+        				public void mouseExited(MouseEvent e) {
+        						leaderboard.setCursor(Cursor.getDefaultCursor()); 
+        				}
+        			
+        			public void mouseClicked(MouseEvent e) {
+        				new Stats(data, NumberOfGuesses, -1, numGames, numWins, streak, maxStreak);
+                    }
+        			});
+        
+        
+        
+        pic.add(settings);
+        pic.add(leaderboard);
+        
+       
+        //The white line under Wordle
+        JPanel linePanel = new JPanel();
+        linePanel.setBackground(Color.GRAY);
+        linePanel.setPreferredSize(new Dimension(mainFrame.getWidth()+ 600, 1));
+        
         
         panel.setLayout(new GridLayout(6, 5, 5, 5));
         borderPanel.setLayout(new GridLayout(1, 1, 1, 1));
-        panel2.setLayout(new GridLayout(1, 0));
+        panel2.setLayout(new BoxLayout(panel2, BoxLayout.LINE_AXIS));
         panel3.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
         JLabel wordle = new JLabel("Wordle");
         wordle.setFont(new Font("Book Antiqua", Font.BOLD, 50));
         wordle.setForeground(Color.WHITE);
-
-        panel2.add(wordle);
         
+        panel2.add(wordle);
+        panel2.add(leaderboard);
+        panel2.add(Box.createRigidArea(new Dimension(10,0)));
+        panel2.add(settings);
+        
+        
+        settings.setBorder(BorderFactory.createEmptyBorder(0, 0, 120, 0));
+        wordle.setBorder(BorderFactory.createEmptyBorder(0, 660, 120, 560));
+        leaderboard.setBorder(BorderFactory.createEmptyBorder(0, 0, 120, 0));
+
 
         JLabel a = new JLabel("   ");
         a.setFont(new Font("Courier", Font.BOLD, 10));
@@ -92,14 +166,23 @@ public class WordleGUI extends JFrame {
         panel.setBackground(Color.BLACK);
 
         initializeArea();
+        
+        cons.insets = new Insets(0, 0, 40, 0);
+        cons.gridx = 0;
+        cons.gridy = 0;
+        mainFrame.add(linePanel, cons);
 
+        
+        cons.insets = new Insets(0, 0, 0, 0);
         cons.gridx = 0;
         cons.gridy = 0;
         mainFrame.add(panel2, cons);
+        
 
         cons.gridx = 0;
         cons.gridy = 1;
         mainFrame.add(panel, cons);
+        panel.setBorder(BorderFactory.createEmptyBorder(0, 0, 100, 0));
 
         cons.gridx = 0;
         cons.gridy = 2;
@@ -107,9 +190,14 @@ public class WordleGUI extends JFrame {
 
         cons.gridx = 0;
         cons.gridy = 3;
-        panel3.setPreferredSize(new Dimension(600, 200));
+        panel3.setPreferredSize(new Dimension(600, 170));
         mainFrame.add(panel3, cons);
-       
+        
+        cons.gridx = 0;
+        cons.gridy = 4;
+        borderPanel.setBackground(Color.BLACK);
+        borderPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 200, 0));
+        mainFrame.add(borderPanel, cons);
      
 
         mainFrame.getContentPane().setBackground(Color.decode("#00000"));
@@ -124,9 +212,6 @@ public class WordleGUI extends JFrame {
             for (int j = 0; j < 10; j++) {
             	 RoundedButton button = new RoundedButton(b[i][j]);
                  keys[i][j] = button;
-
-                
-                 
                  button.addActionListener((ActionListener) new ActionListener() {
                  
                 	 public void actionPerformed(ActionEvent e) {
@@ -264,6 +349,8 @@ public class WordleGUI extends JFrame {
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 5; j++) {
                 textFields[i][j] = new JTextField("");
+                textFields[i][j].setFont(new Font("Franklin Gothic", Font.BOLD, 40));
+
                 textFields[i][j].setBackground(Color.BLACK);
                 textFields[i][j].setEditable(false);
                 textFields[i][j].setHorizontalAlignment(JTextField.CENTER);
@@ -394,109 +481,129 @@ public class WordleGUI extends JFrame {
         
         
         textFields[row][col].setText(e.toUpperCase());
-        textFields[row][col].setFont(new Font("Franklin Gothic", Font.BOLD, 40));
         textFields[row][col].setForeground(Color.WHITE);
         textFields[row][col].requestFocus();
         col++;
     }
 
     //Method is called 
-    public void handlekeyPressed() {
-        for (int i = 0; i < 5; i++) {
-            System.out.println(ans.correct(guess));
-            if (ans.correct(guess).get(i).equals(1)) {
-                for (int x = 0; x < 3; x++) {
-                    for (int j = 0; j < 10; j++) {
-                        if (b[x][j].equalsIgnoreCase(String.valueOf(guess.charAt(i))) && !keys[x][j].getBackground().equals(Color.decode("#538d4e"))) {
-                            keys[x][j].setBackground(Color.decode("#b89c3c"));
-                        }
-                    }
-                }
-            }
-
-            if (ans.correct(guess).get(i).equals(0)) {
-                for (int x = 0; x < 3; x++) {
-                    for (int j = 0; j < 10; j++) {
-                        if (b[x][j].equalsIgnoreCase(String.valueOf(guess.charAt(i)))) {
-                            keys[x][j].setBackground(Color.decode("#538d4e"));
-                        }
-                    }
-                }
-            } else {
-                for (int x = 0; x < 3; x++) {
-                    for (int j = 0; j < 10; j++) {
-                        if (b[x][j].equalsIgnoreCase(String.valueOf(guess.charAt(i))) &&
-                                !keys[x][j].getBackground().equals(Color.decode("#538d4e")) &&
-                                !keys[x][j].getBackground().equals(Color.decode("#b89c3c"))) {
-                            keys[x][j].setBackground(Color.decode("#403c3c"));
-                        }
-                    }
-                }
-            }
-        }
-
-        counter = 0;
-
-        for (int i = 0; i < 5; i++) {
-            if (ans.correct(guess).get(i).equals(1)) {
-                textFields[row][i].setBackground(Color.decode("#b89c3c"));
-                textFields[row][i].setBorder(new LineBorder(Color.decode("#b89c3c")));
-                textFields[row][i].setOpaque(true);
-            } else if (ans.correct(guess).get(i).equals(0)) {
-                textFields[row][i].setBackground(Color.decode("#538d4e"));
-                textFields[row][i].setBorder(new LineBorder(Color.decode("#538d4e")));
-                textFields[row][i].setOpaque(true);
-            } else {
-                textFields[row][i].setBackground(Color.decode("#787c7f"));
-                textFields[row][i].setBorder(new LineBorder(Color.decode("#787c7f")));
-                textFields[row][i].setOpaque(true);
-            }
-        }
-
-        /*
-         * If the answer equals the word, increase the number of wins and the streak.
-         * Check to see if the current streak is larger than the max streak and update if needed.
-         */
-        if (ans.getWord().equals(guess)) {
-            JOptionPane.showMessageDialog(mainFrame, "YOU WON");
-            numGames++;
-            numWins++;
-            streak++;
-            if (streak > maxStreak) {
-            	maxStreak = streak;
-            }
-
-            data[numGuesses-1]++;    
-            resetGame();
-        } 
+    public void handlekeyPressed()  {
         
-        //Continue the game.
-        else {
-            guess = "";
-            col = 0;
-            row++;
-            numGuesses++;
+        
+        int delay = 450; 
+        Timer timer = new Timer(delay, (e) -> {
+            // Your loop code here
+            if (index < 5) {
+                if (ans.correct(guess).get(index).equals(1)) {
+                    textFields[row][index].setBackground(Color.decode("#b89c3c"));
+                    textFields[row][index].setBorder(new LineBorder(Color.decode("#b89c3c")));
+                    textFields[row][index].setOpaque(true);
+                } else if (ans.correct(guess).get(index).equals(0)) {
+                    textFields[row][index].setBackground(Color.decode("#538d4e"));
+                    textFields[row][index].setBorder(new LineBorder(Color.decode("#538d4e")));
+                    textFields[row][index].setOpaque(true);
+                } else {
+                    textFields[row][index].setBackground(Color.decode("#787c7f"));
+                    textFields[row][index].setBorder(new LineBorder(Color.decode("#787c7f")));
+                    textFields[row][index].setOpaque(true);
+                }
+                index++; //Move to the next iteration
+            } 
             
-            //Check to see if the last row is occupied, if not, continue the game.
-            if (row != 6) {
-                  textFields[row][col].requestFocus();
-             	}
             
-            //Or else you used the last guess and you lost.
             else {
-            	JOptionPane.showMessageDialog(mainFrame, "You lost, the word was: " + ans.getWord());
-            	numGames++;
-            	data[numGuesses - 1]++;
             	
-            	if (streak > maxStreak) {
-            		maxStreak = streak;
-            	}
-            	
-            	//Reset streak
-            	streak = 0;
-            	resetGame();
+                ((Timer)e.getSource()).stop();
+                index = 0;
+                //Stop the timer when all iterations are done and reset index.
+            
+                //This chunk of code re-colors the keyboard based off of the guess.
+                for (int i = 0; i < 5; i++) {
+                    System.out.println(ans.correct(guess));
+                    if (ans.correct(guess).get(i).equals(1)) {
+                        for (int x = 0; x < 3; x++) {
+                            for (int j = 0; j < 10; j++) {
+                                if (b[x][j].equalsIgnoreCase(String.valueOf(guess.charAt(i))) && !keys[x][j].getBackground().equals(Color.decode("#538d4e"))) {
+                                    keys[x][j].setBackground(Color.decode("#b89c3c"));
+                                }
+                            }
+                        }
+                    }
+
+                    if (ans.correct(guess).get(i).equals(0)) {
+                        for (int x = 0; x < 3; x++) {
+                            for (int j = 0; j < 10; j++) {
+                                if (b[x][j].equalsIgnoreCase(String.valueOf(guess.charAt(i)))) {
+                                    keys[x][j].setBackground(Color.decode("#538d4e"));
+                                }
+                            }
+                        }
+                    } else {
+                        for (int x = 0; x < 3; x++) {
+                            for (int j = 0; j < 10; j++) {
+                                if (b[x][j].equalsIgnoreCase(String.valueOf(guess.charAt(i))) &&
+                                        !keys[x][j].getBackground().equals(Color.decode("#538d4e")) &&
+                                        !keys[x][j].getBackground().equals(Color.decode("#b89c3c"))) {
+                                    keys[x][j].setBackground(Color.decode("#403c3c"));
+                                }
+                            }
+                        }
+                    }
+                }
+
+                counter = 0;
+                
+                /*
+                 * If the answer equals the word, increase the number of wins and the streak.
+                 * Check to see if the current streak is larger than the max streak and update if needed.
+                 */
+                if (ans.getWord().equals(guess)) {
+                    JOptionPane.showMessageDialog(mainFrame, "YOU WON");
+                    numGames++;
+                    numWins++;
+                    streak++;
+                    
+                    if (streak > maxStreak) {
+                    	maxStreak = streak;
+                    }
+
+                    data[numGuesses-1]++;    
+                    resetGame();
+                } 
+                
+                //Continue the game.
+                else {
+                    guess = "";
+                    col = 0;
+                    row++;
+                    numGuesses++;
+                    //Check to see if the last row is occupied, if not, continue the game.
+                    if (row != 6) {
+                          textFields[row][col].requestFocus();
+                     	}
+                    
+                    //Or else you used the last guess and you lost.
+                    else {
+                    	JOptionPane.showMessageDialog(mainFrame, "You lost, the word was: " + ans.getWord());
+                    	numGames++;
+                    	
+                    	if (streak > maxStreak) {
+                    		maxStreak = streak;
+                    	}
+                    	
+                    	//Reset streak
+                    	streak = 0;
+                    	resetGame();
+                    	
+                    }
+                }
             }
-        }
+        });
+
+        //Start the Timer
+        timer.start();
+       
+       
            
            
         }
@@ -547,10 +654,9 @@ public class WordleGUI extends JFrame {
                     }
                     
                 	
-                	
+                	//Make button to take up space above Enter and color it black.
                     else if(i==1 && j==0 ) {
                     	keys[i][j].setBackground(Color.BLACK);
-         
                    	
                     }
                     

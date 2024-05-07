@@ -124,7 +124,7 @@ public class Stats extends JFrame {
                 g.setColor(Color.WHITE);
             } 
             
-            //Or else just keep it gray
+            //Or else just keep it gray.
             else {
                 g.setColor(Color.GRAY);
                 g.fillRect(x - 20, y, barWidth, barHeight);
