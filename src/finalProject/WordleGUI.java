@@ -10,6 +10,14 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+
+/*
+ * By: Yadel Gezehagne
+ * The main goal of this project was to create a Wordle clone strictly using Java!
+ * Last major updates: 5/26/23
+ */
+
+
 public class WordleGUI extends JFrame {
 	 private static Word ans;
 	    public static int numGuesses;
@@ -24,7 +32,7 @@ public class WordleGUI extends JFrame {
 	    private static String guess;
 	    private int counter;
 	    private static RoundedButton[][] keys;
-	    private static String[][] b;
+	    private static String[][] KeyBoard;
 	    private JFrame mainFrame;
 	    private JTextField[][] textFields;
 	    private JPanel panel;
@@ -33,12 +41,17 @@ public class WordleGUI extends JFrame {
 	    private GridBagConstraints cons;
 	    private JPanel borderPanel;
 	    int index = 0;
-	   
+	    int delay;
 
 	        
+	    /*
+	     * This constructor builds the wordle frame and all other components.
+	     * An area for improvement would be the usage of layout managers (explained more in depth
+	     * on readme file).
+	     */
     public WordleGUI() {
     	 keys = new RoundedButton[3][10];
-    	 b = new String[][] {
+    	 KeyBoard = new String[][] {
     	            {"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"},
     	            {"", "A", "S", "D", "F", "G", "H", "J", "K", "L"},
     	            {"", "", "Z", "X", "C", "V", "B", "N", "M", ""}
@@ -79,8 +92,8 @@ public class WordleGUI extends JFrame {
             e.printStackTrace();
         }
 
-        int width = 50; // Specify the width of the resized image
-        int height = 50; // Specify the height of the resized image
+        int width = 50; 
+        int height = 50; 
         Image resizedImage = myPicture.getScaledInstance(width, height, Image.SCALE_SMOOTH);
         Image resizedImage2 = myPicture2.getScaledInstance(width, height, Image.SCALE_SMOOTH);
         
@@ -207,10 +220,11 @@ public class WordleGUI extends JFrame {
         mainFrame.pack();
     }
 
+    //Creates the buttons (keyboard) and textfields (the screen)
     public void initializeArea() {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 10; j++) {
-            	 RoundedButton button = new RoundedButton(b[i][j]);
+            	 RoundedButton button = new RoundedButton(KeyBoard[i][j]);
                  keys[i][j] = button;
                  button.addActionListener((ActionListener) new ActionListener() {
                  
@@ -490,9 +504,10 @@ public class WordleGUI extends JFrame {
     public void handlekeyPressed()  {
         
         
-        int delay = 450; 
+         delay = 450; 
         Timer timer = new Timer(delay, (e) -> {
-            // Your loop code here
+        	
+           
             if (index < 5) {
                 if (ans.correct(guess).get(index).equals(1)) {
                     textFields[row][index].setBackground(Color.decode("#b89c3c"));
@@ -507,7 +522,11 @@ public class WordleGUI extends JFrame {
                     textFields[row][index].setBorder(new LineBorder(Color.decode("#787c7f")));
                     textFields[row][index].setOpaque(true);
                 }
-                index++; //Move to the next iteration
+                index++; //Move to the next iteration.
+                
+                //Makes the letters sequentially pop up quicker exponentially.
+                delay -= 20 * index;
+                ((Timer)e.getSource()).setDelay(delay); 
             } 
             
             
@@ -523,7 +542,7 @@ public class WordleGUI extends JFrame {
                     if (ans.correct(guess).get(i).equals(1)) {
                         for (int x = 0; x < 3; x++) {
                             for (int j = 0; j < 10; j++) {
-                                if (b[x][j].equalsIgnoreCase(String.valueOf(guess.charAt(i))) && !keys[x][j].getBackground().equals(Color.decode("#538d4e"))) {
+                                if (KeyBoard[x][j].equalsIgnoreCase(String.valueOf(guess.charAt(i))) && !keys[x][j].getBackground().equals(Color.decode("#538d4e"))) {
                                     keys[x][j].setBackground(Color.decode("#b89c3c"));
                                 }
                             }
@@ -533,7 +552,7 @@ public class WordleGUI extends JFrame {
                     if (ans.correct(guess).get(i).equals(0)) {
                         for (int x = 0; x < 3; x++) {
                             for (int j = 0; j < 10; j++) {
-                                if (b[x][j].equalsIgnoreCase(String.valueOf(guess.charAt(i)))) {
+                                if (KeyBoard[x][j].equalsIgnoreCase(String.valueOf(guess.charAt(i)))) {
                                     keys[x][j].setBackground(Color.decode("#538d4e"));
                                 }
                             }
@@ -541,7 +560,7 @@ public class WordleGUI extends JFrame {
                     } else {
                         for (int x = 0; x < 3; x++) {
                             for (int j = 0; j < 10; j++) {
-                                if (b[x][j].equalsIgnoreCase(String.valueOf(guess.charAt(i))) &&
+                                if (KeyBoard[x][j].equalsIgnoreCase(String.valueOf(guess.charAt(i))) &&
                                         !keys[x][j].getBackground().equals(Color.decode("#538d4e")) &&
                                         !keys[x][j].getBackground().equals(Color.decode("#b89c3c"))) {
                                     keys[x][j].setBackground(Color.decode("#403c3c"));
