@@ -46,9 +46,9 @@ public class WordleGUI extends JFrame {
 
 	        
 	    /*
-	     * This constructor builds the wordle frame and all other components.
+	     * This constructor builds the Wordle frame and all other components.
 	     * An area for improvement would be the better usage of newer
-	     * layout managers such as Mig Layout.
+	     * layout managers such as MigLayout.
 	     */
     public WordleGUI() {
     	 keys = new RoundedButton[3][10];
