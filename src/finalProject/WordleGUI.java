@@ -36,9 +36,9 @@ public class WordleGUI extends JFrame {
 	    private static String[][] KeyBoard;
 	    private JFrame mainFrame;
 	    private JTextField[][] textFields;
-	    private JPanel panel;
-	    private JPanel panel2;
-	    private JPanel panel3;
+	    private JPanel gamePanel;
+	    private JPanel titlePanel;
+	    private JPanel keyboardPanel;
 	    private GridBagConstraints cons;
 	    private JPanel borderPanel;
 	    int index;
@@ -59,13 +59,12 @@ public class WordleGUI extends JFrame {
     	    };
         mainFrame = new JFrame("Wordle");
 	    textFields = new JTextField[6][5];
-	    panel = new JPanel();
-	    panel2 = new JPanel();
-	    panel3 = new JPanel();
+	    gamePanel = new JPanel();
+	    titlePanel = new JPanel();
+	    keyboardPanel = new JPanel();
 	    cons = new GridBagConstraints();
 	    borderPanel = new JPanel();
     	ans = new Word();
-    	System.out.println(ans.getWord());
         numGuesses = 1;
         numWins = 0;
         numGames = 0;
@@ -82,49 +81,18 @@ public class WordleGUI extends JFrame {
       
         mainFrame.setLayout(new GridBagLayout());
         
-        
+        //Create empty bottom panel for good Gridbag constraint spacing (on the bottom).
         JLabel a = new JLabel("   ");
         a.setFont(new Font("Courier", Font.BOLD, 10));
         a.setForeground(Color.BLACK);
         borderPanel.add(a);
+        
 
         
-        BufferedImage myPicture = null;
-        BufferedImage myPicture2 = null;
-        try {
-            myPicture = ImageIO.read(new File("C:\\Users\\gbky2\\Downloads\\icon.png"));
-            myPicture2 = ImageIO.read(new File("C:\\Users\\gbky2\\Downloads\\setting.jpg"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        int width = 50; 
-        int height = 50; 
-        Image resizedImage = myPicture.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-        Image resizedImage2 = myPicture2.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-        
-        ImageIcon icon2 = new ImageIcon(resizedImage2);
-        ImageIcon icon = new ImageIcon(resizedImage);
-        JLabel leaderboard = new JLabel(icon);
-        JLabel settings = new JLabel(icon2);
-        
-        //Currently no function.
-        settings.addMouseListener(new MouseAdapter() {
-            		@Override
-            				public void mouseEntered(MouseEvent e) {
-            			settings.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)); 
-            			}
-
-            		@Override
-            				public void mouseExited(MouseEvent e) {
-            					settings.setCursor(Cursor.getDefaultCursor()); 
-            			}
-            		
-            		public void mouseClicked(MouseEvent e) {
-            			
-            		}
-        			});
-        
+        JLabel leaderboard = new JLabel(createIcon("C:\\Users\\gbky2\\Downloads\\icon.png"));
+        JLabel settings = new JLabel(createIcon("C:\\Users\\gbky2\\Downloads\\icon.png"));
+    
+       
         leaderboard.addMouseListener(new MouseAdapter() {
         			@Override
         				public void mouseEntered(MouseEvent e) {
@@ -142,59 +110,56 @@ public class WordleGUI extends JFrame {
         			});
         
         
-       
-        //The white line under Wordle
-        JPanel linePanel = new JPanel();
-        linePanel.setBackground(Color.GRAY);
-        linePanel.setPreferredSize(new Dimension(mainFrame.getWidth()+ 600, 1));
         
-        
-        panel.setLayout(new GridBagLayout());
-        panel2.setLayout((new GridLayout(1, 3)));
-        panel3.setLayout(new GridBagLayout());
+        //Set the layouts for the panels.
+        gamePanel.setLayout(new GridBagLayout());
+        titlePanel.setLayout((new GridLayout(1, 3)));
+        keyboardPanel.setLayout(new GridBagLayout());
 
         
-        
+        //Create the title.
         JLabel wordle = new JLabel("Wordle");
         wordle.setFont(new Font("Book Antiqua", Font.BOLD, 50));
         wordle.setForeground(Color.WHITE);
      
-        panel2.add(settings);
-        panel2.add(wordle);
+        
+        //Create the top panel which contains the settings icon, Wordle, and the leaderboard icon
         wordle.setHorizontalAlignment(JLabel.CENTER);
-        panel2.add(leaderboard);
-        panel2.setBorder( new MatteBorder(0, 0, 1, 0, Color.GRAY));
+        titlePanel.add(settings);
+        titlePanel.add(wordle);
+        titlePanel.add(leaderboard);
+        titlePanel.setBorder(new MatteBorder(0, 0, 1, 0, Color.GRAY));
       
         
     
-
+        //Set the backgrounds to be black because dark theme is the best.
         borderPanel.setBackground(Color.BLACK);
-        panel3.setBackground(Color.BLACK);
-        panel2.setBackground(Color.BLACK);
-        panel.setBackground(Color.BLACK);
+        keyboardPanel.setBackground(Color.BLACK);
+        titlePanel.setBackground(Color.BLACK);
+        gamePanel.setBackground(Color.BLACK);
 
-      initializeArea();
+        initializeArea();
 
-      cons.fill = GridBagConstraints.HORIZONTAL;
-      cons.anchor = GridBagConstraints.NORTH;
+        cons.fill = GridBagConstraints.HORIZONTAL;
+        cons.anchor = GridBagConstraints.NORTH;
 
       
         cons.weighty = 0.3;
         cons.gridx = 0;
         cons.gridy = 0;
-        mainFrame.add(panel2, cons);
+        mainFrame.add(titlePanel, cons);
        
         
   
         cons.weighty = 0.5;
         cons.gridx = 0;
         cons.gridy = 1;
-        mainFrame.add(panel, cons);
+        mainFrame.add(gamePanel, cons);
 
         cons.weighty = 0.5;
         cons.gridx = 0;
         cons.gridy = 2;
-        mainFrame.add(panel3, cons);
+        mainFrame.add(keyboardPanel, cons);
        
         cons.weighty = 1;
         cons.gridx = 0;
@@ -226,11 +191,11 @@ public class WordleGUI extends JFrame {
                      JButton button = (JButton) e.getSource();
                      String letter = button.getText();
                      if (counter < 5 && !letter.equals(("")) && !letter.equals("Enter") && !letter.equals("back")) {
-                    	 letter(letter); 
+                    	 letterTyped(letter); 
           	        } 
                      
                      else if (letter.equals("Enter") && counter == 5 && Word.isWord(guess)) {
-                    	 handlekeyPressed();
+                    	 enterPressed();
                      }
                      
                      else if (counter == 5 && letter.equals("Enter") && !Word.isWord(guess)) {
@@ -257,7 +222,7 @@ public class WordleGUI extends JFrame {
                  button.addKeyListener(new KeyAdapter() { 
                 	 public void keyPressed(KeyEvent e) {
              	        if (Character.isLetter(e.getKeyChar()) && counter < 5) {
-             	            letter(String.valueOf(e.getKeyChar()));
+             	            letterTyped(String.valueOf(e.getKeyChar()));
              	        } 
              	        
              	        else if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE && guess.length() > 0) {
@@ -265,7 +230,7 @@ public class WordleGUI extends JFrame {
              	        } 
              	        
              	        else if (counter == 5 && e.getKeyCode() == KeyEvent.VK_ENTER && Word.isWord(guess)) {
-             	            handlekeyPressed();
+             	            enterPressed();
              	           
              	        } 
              	        else if (counter == 5 && e.getKeyCode() == KeyEvent.VK_ENTER && !Word.isWord(guess)) {
@@ -297,7 +262,7 @@ public class WordleGUI extends JFrame {
                  
 
                      cons.gridwidth = 2;
-                     panel3.add(button, cons);
+                     keyboardPanel.add(button, cons);
                      cons.gridwidth = 1;
                  }
                  
@@ -323,7 +288,7 @@ public class WordleGUI extends JFrame {
                      });
                      
                      cons.gridwidth = 2;
-                     panel3.add(button, cons);
+                     keyboardPanel.add(button, cons);
                      cons.gridwidth = 1;
                      
                  }
@@ -347,7 +312,7 @@ public class WordleGUI extends JFrame {
                              button.setCursor(Cursor.getDefaultCursor()); 
                          }
                      });
-                	 panel3.add(button, cons);
+                	 keyboardPanel.add(button, cons);
                  }
                  
                 
@@ -375,7 +340,7 @@ public class WordleGUI extends JFrame {
                 	    @Override
                 	    public void keyPressed(KeyEvent e) {
                 	        if (Character.isLetter(e.getKeyChar()) && counter < 5) {
-                	            letter(String.valueOf(e.getKeyChar()));
+                	            letterTyped(String.valueOf(e.getKeyChar()));
                 	        } 
                 	        
                 	        else if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE && guess.length() > 0) {
@@ -383,7 +348,7 @@ public class WordleGUI extends JFrame {
                 	        } 
                 	        
                 	        else if (counter == 5 && e.getKeyCode() == KeyEvent.VK_ENTER && Word.isWord(guess)) {
-                	            handlekeyPressed();
+                	            enterPressed();
                 	           
                 	        } 
                 	        else if (counter == 5 && e.getKeyCode() == KeyEvent.VK_ENTER && !Word.isWord(guess)) {
@@ -401,7 +366,7 @@ public class WordleGUI extends JFrame {
                 	    }
                 	});
 
-                	panel.add(textFields[i][j], cons);
+                	gamePanel.add(textFields[i][j], cons);
                 }
             }
         }
@@ -410,7 +375,7 @@ public class WordleGUI extends JFrame {
     public void dialogFader(String labelinput) {
         JDialog dialog = new JDialog(mainFrame);
         dialog.setSize(200, 30);
-        dialog.setLocationRelativeTo(panel);
+        dialog.setLocationRelativeTo(gamePanel);
         JPanel panel = new JPanel();
         JLabel label = new JLabel(labelinput);
         panel.add(label);
@@ -471,6 +436,21 @@ public class WordleGUI extends JFrame {
     }
     
     
+    public ImageIcon createIcon(String pic) {	
+    	BufferedImage myPicture = null;
+        try {
+            myPicture = ImageIO.read(new File(pic));
+        } 
+        
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Image resizedImage = myPicture.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+        ImageIcon icon = new ImageIcon(resizedImage);
+    	return icon;
+
+    }
     //Logic for when backspace is either clicked or pressed on the keyboard
     public void backspace() {
     	 counter--;
@@ -478,41 +458,38 @@ public class WordleGUI extends JFrame {
          col--;
          textFields[row][col].setText("");
          textFields[row][col].requestFocus();
-
     }
     
     
     //Logic for when a letter is pressed on the keyboard or clicked on the digital keyboard..
-    public void letter(String e) {
+    public void letterTyped(String e) {
     	counter++;
-        guess += e.toLowerCase();
-        System.out.println(guess + " " + counter);
-        
-        
+        guess += e.toLowerCase();        
         textFields[row][col].setText(e.toUpperCase());
         textFields[row][col].setForeground(Color.WHITE);
         textFields[row][col].requestFocus();
         col++;
     }
+    
 
-    //Method is called 
-    public void handlekeyPressed()  {
-        
-        
+    //Method is called when enter is pressed and its a valid call (five letters typed and a real word). 
+    public void enterPressed()  {
          delay = 450; 
         Timer timer = new Timer(delay, (e) -> {
-        	
-           
             if (index < 5) {
                 if (ans.correct(guess).get(index).equals(1)) {
                     textFields[row][index].setBackground(Color.decode("#b89c3c"));
                     textFields[row][index].setBorder(new LineBorder(Color.decode("#b89c3c")));
                     textFields[row][index].setOpaque(true);
-                } else if (ans.correct(guess).get(index).equals(0)) {
+                } 
+                
+                else if (ans.correct(guess).get(index).equals(0)) {
                     textFields[row][index].setBackground(Color.decode("#538d4e"));
                     textFields[row][index].setBorder(new LineBorder(Color.decode("#538d4e")));
                     textFields[row][index].setOpaque(true);
-                } else {
+                }
+                
+                else {
                     textFields[row][index].setBackground(Color.decode("#787c7f"));
                     textFields[row][index].setBorder(new LineBorder(Color.decode("#787c7f")));
                     textFields[row][index].setOpaque(true);
@@ -533,7 +510,6 @@ public class WordleGUI extends JFrame {
             
                 //This chunk of code re-colors the keyboard based off of the guess.
                 for (int i = 0; i < 5; i++) {
-                    System.out.println(ans.correct(guess));
                     if (ans.correct(guess).get(i).equals(1)) {
                         for (int x = 0; x < 3; x++) {
                             for (int j = 0; j < 10; j++) {
@@ -564,7 +540,6 @@ public class WordleGUI extends JFrame {
                         }
                     }
                 }
-
                 counter = 0;
                 
                 /*
@@ -616,10 +591,7 @@ public class WordleGUI extends JFrame {
 
         //Start the Timer
         timer.start();
-       
-       
-           
-           
+          
         }
 
 
@@ -637,7 +609,6 @@ public class WordleGUI extends JFrame {
             guess = "";
             counter = 0;
             ans = new Word(); 
-            System.out.println(ans.getWord());
 
             for (int i = 0; i < 6; i++) {
                 for (int j = 0; j < 5; j++) {
@@ -684,7 +655,6 @@ public class WordleGUI extends JFrame {
                 }
             }
             }
-            
             
             textFields[row][col].requestFocus();
             new Stats(data, NumberOfGuesses, numGuesses, numGames, numWins, streak, maxStreak);
