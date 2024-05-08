@@ -3,6 +3,7 @@ package finalProject;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.border.MatteBorder;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -14,7 +15,7 @@ import java.io.IOException;
 /*
  * By: Yadel Gezehagne
  * The main goal of this project was to create a Wordle clone strictly using Java!
- * Last major updates: 5/26/23
+ * Last major updates: 5/1/24
  */
 
 
@@ -46,8 +47,8 @@ public class WordleGUI extends JFrame {
 	        
 	    /*
 	     * This constructor builds the wordle frame and all other components.
-	     * An area for improvement would be the usage of layout managers (explained more in depth
-	     * on readme file).
+	     * An area for improvement would be the better usage of newer
+	     * layout managers such as Mig Layout.
 	     */
     public WordleGUI() {
     	 keys = new RoundedButton[3][10];
@@ -78,9 +79,14 @@ public class WordleGUI extends JFrame {
     	NumberOfGuesses = new int[]{1, 2, 3, 4, 5, 6};
     	
         
-        mainFrame.setSize(1000, 1000);
+      
         mainFrame.setLayout(new GridBagLayout());
         
+        
+        JLabel a = new JLabel("   ");
+        a.setFont(new Font("Courier", Font.BOLD, 10));
+        a.setForeground(Color.BLACK);
+        borderPanel.add(a);
 
         
         BufferedImage myPicture = null;
@@ -101,7 +107,6 @@ public class WordleGUI extends JFrame {
         ImageIcon icon = new ImageIcon(resizedImage);
         JLabel leaderboard = new JLabel(icon);
         JLabel settings = new JLabel(icon2);
-        JPanel topRightButtons = new JPanel();
         
         //Currently no function.
         settings.addMouseListener(new MouseAdapter() {
@@ -137,10 +142,6 @@ public class WordleGUI extends JFrame {
         			});
         
         
-        
-        topRightButtons.add(settings);
-        topRightButtons.add(leaderboard);
-        
        
         //The white line under Wordle
         JPanel linePanel = new JPanel();
@@ -148,70 +149,57 @@ public class WordleGUI extends JFrame {
         linePanel.setPreferredSize(new Dimension(mainFrame.getWidth()+ 600, 1));
         
         
-        panel.setLayout(new GridLayout(6, 5, 5, 5));
-        borderPanel.setLayout(new GridLayout(1, 1, 1, 1));
-        panel2.setLayout(new BoxLayout(panel2, BoxLayout.LINE_AXIS));
-        panel3.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        panel.setLayout(new GridBagLayout());
+        panel2.setLayout((new GridLayout(1, 3)));
+        panel3.setLayout(new GridBagLayout());
 
+        
+        
         JLabel wordle = new JLabel("Wordle");
         wordle.setFont(new Font("Book Antiqua", Font.BOLD, 50));
         wordle.setForeground(Color.WHITE);
-        
-        panel2.add(wordle);
-        panel2.add(leaderboard);
-        panel2.add(Box.createRigidArea(new Dimension(10,0)));
+     
         panel2.add(settings);
+        panel2.add(wordle);
+        wordle.setHorizontalAlignment(JLabel.CENTER);
+        panel2.add(leaderboard);
+        panel2.setBorder( new MatteBorder(0, 0, 1, 0, Color.GRAY));
+      
         
-        
-        settings.setBorder(BorderFactory.createEmptyBorder(0, 0, 120, 0));
-        wordle.setBorder(BorderFactory.createEmptyBorder(0, 660, 120, 560));
-        leaderboard.setBorder(BorderFactory.createEmptyBorder(0, 0, 120, 0));
-
-
-        JLabel a = new JLabel("   ");
-        a.setFont(new Font("Courier", Font.BOLD, 10));
-        a.setForeground(Color.BLACK);
-        borderPanel.add(a);
+    
 
         borderPanel.setBackground(Color.BLACK);
         panel3.setBackground(Color.BLACK);
         panel2.setBackground(Color.BLACK);
         panel.setBackground(Color.BLACK);
 
-        initializeArea();
-        
-        cons.insets = new Insets(0, 0, 40, 0);
-        cons.gridx = 0;
-        cons.gridy = 0;
-        mainFrame.add(linePanel, cons);
+      initializeArea();
 
-        
-        cons.insets = new Insets(0, 0, 0, 0);
+      cons.fill = GridBagConstraints.HORIZONTAL;
+      cons.anchor = GridBagConstraints.NORTH;
+
+      
+        cons.weighty = 0.3;
         cons.gridx = 0;
         cons.gridy = 0;
         mainFrame.add(panel2, cons);
+       
         
-
+  
+        cons.weighty = 0.5;
         cons.gridx = 0;
         cons.gridy = 1;
         mainFrame.add(panel, cons);
-        panel.setBorder(BorderFactory.createEmptyBorder(0, 0, 100, 0));
 
+        cons.weighty = 0.5;
         cons.gridx = 0;
         cons.gridy = 2;
-        mainFrame.add(borderPanel, cons);
-
+        mainFrame.add(panel3, cons);
+       
+        cons.weighty = 1;
         cons.gridx = 0;
         cons.gridy = 3;
-        panel3.setPreferredSize(new Dimension(600, 170));
-        mainFrame.add(panel3, cons);
-        
-        cons.gridx = 0;
-        cons.gridy = 4;
-        borderPanel.setBackground(Color.BLACK);
-        borderPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 200, 0));
         mainFrame.add(borderPanel, cons);
-     
 
         mainFrame.getContentPane().setBackground(Color.decode("#00000"));
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -222,8 +210,14 @@ public class WordleGUI extends JFrame {
 
     //Creates the buttons (keyboard) and textfields (the screen)
     public void initializeArea() {
+    	cons.gridx = 0;
+    	cons.gridy = 0;
+    	cons.insets = new Insets(2, 2, 2, 2);
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 10; j++) {
+            	cons.gridy = i;
+                cons.gridx = j;
+                
             	 RoundedButton button = new RoundedButton(KeyBoard[i][j]);
                  keys[i][j] = button;
                  button.addActionListener((ActionListener) new ActionListener() {
@@ -286,7 +280,7 @@ public class WordleGUI extends JFrame {
                  //This is the logic for modifying the Rounded button class to create the enter button.
                  if (i == 2 && j == 0) {
                      //Make the button span two columns
-                     button.setPreferredSize(new Dimension(90, 50));
+                     button.setPreferredSize(new Dimension(108, 50));
                      button.setText("Enter");                     
                      button.addMouseListener(new MouseAdapter() {
                          @Override
@@ -300,7 +294,11 @@ public class WordleGUI extends JFrame {
                          }
                      });
                      
-                     panel3.add(button);
+                 
+
+                     cons.gridwidth = 2;
+                     panel3.add(button, cons);
+                     cons.gridwidth = 1;
                  }
                  
                  
@@ -310,7 +308,7 @@ public class WordleGUI extends JFrame {
                  }
                  
                  else if  (i == 2 && j==9) {
-                	 button.setPreferredSize(new Dimension(90, 50));
+                	button.setPreferredSize(new Dimension(90, 50));
                      button.setText("back");
                      button.addMouseListener(new MouseAdapter() {
                          @Override
@@ -324,17 +322,15 @@ public class WordleGUI extends JFrame {
                          }
                      });
                      
-                     panel3.add(button);
+                     cons.gridwidth = 2;
+                     panel3.add(button, cons);
+                     cons.gridwidth = 1;
                      
                  }
                
                  //Essentially a filler black space above the Enter button.
                  else if(i==1 && j==0) {
-                	 
-                	 button.setBackground(Color.BLACK);
-                	 button.setPreferredSize(new Dimension(50, 50));
-                	 panel3.add(button);
-                
+                	 continue;
                  }
                  
                  
@@ -351,8 +347,7 @@ public class WordleGUI extends JFrame {
                              button.setCursor(Cursor.getDefaultCursor()); 
                          }
                      });
-                     
-                	 panel3.add(button);
+                	 panel3.add(button, cons);
                  }
                  
                 
@@ -362,15 +357,15 @@ public class WordleGUI extends JFrame {
         //Creating the word boxes where each letter is displayed after typing or clicking a button
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 5; j++) {
+            	cons.gridy = i;
+                cons.gridx = j;
                 textFields[i][j] = new JTextField("");
                 textFields[i][j].setFont(new Font("Franklin Gothic", Font.BOLD, 40));
-
                 textFields[i][j].setBackground(Color.BLACK);
                 textFields[i][j].setEditable(false);
                 textFields[i][j].setHorizontalAlignment(JTextField.CENTER);
                 textFields[i][j].setBorder(new LineBorder(Color.GRAY));
                 textFields[i][j].setPreferredSize(new Dimension(70, 70));
-
                 textFields[i][j].addKeyListener(new KeyAdapter() {
             
                 	    public void keyTyped(KeyEvent e) {
@@ -406,7 +401,7 @@ public class WordleGUI extends JFrame {
                 	    }
                 	});
 
-                	panel.add(textFields[i][j]);
+                	panel.add(textFields[i][j], cons);
                 }
             }
         }
@@ -658,7 +653,7 @@ public class WordleGUI extends JFrame {
                 	
                 	if (i == 2 && j == 0) {
                         //Make the Enter button span two columns
-                        keys[i][j].setPreferredSize(new Dimension(90, 50));
+                        keys[i][j].setPreferredSize(new Dimension(108, 50));
                         keys[i][j].setText("Enter");
                         
                     }
