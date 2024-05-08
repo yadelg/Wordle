@@ -41,7 +41,7 @@ public class WordleGUI extends JFrame {
 	    private JPanel panel3;
 	    private GridBagConstraints cons;
 	    private JPanel borderPanel;
-	    int index = 0;
+	    int index;
 	    int delay;
 
 	        
@@ -77,7 +77,7 @@ public class WordleGUI extends JFrame {
         counter = 0;
     	data = new int[]{0, 0, 0, 0, 0, 0};
     	NumberOfGuesses = new int[]{1, 2, 3, 4, 5, 6};
-    	
+    	index = 0;
         
       
         mainFrame.setLayout(new GridBagLayout());
