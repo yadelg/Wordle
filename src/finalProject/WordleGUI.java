@@ -277,7 +277,7 @@ public class WordleGUI extends JFrame {
                 	 
                  });
                     
-                 //This is the logic for modifying the Rounded button class to create the enter button.
+                 //This is the logic for modifying the Rounded button class to create the Enter button.
                  if (i == 2 && j == 0) {
                      //Make the button span two columns
                      button.setPreferredSize(new Dimension(108, 50));
